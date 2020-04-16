@@ -1,5 +1,5 @@
 import { getRepository } from 'typeorm';
-import AppError from '../errors/AppError';
+// import AppError from '../errors/AppError';
 
 import Transaction from '../models/Transaction';
 import Category from '../models/Category';
@@ -21,31 +21,20 @@ class CreateTransactionService {
     const categoryRepository = getRepository(Category);
     const transactionRepository = getRepository(Transaction);
 
-    const checkCategoryExist = await categoryRepository.findOne({
+    let categoryData = await categoryRepository.findOne({
       where: { category },
     });
 
-    if (!checkCategoryExist) {
-      const newcategory = await categoryRepository.create({ title: category });
-      await categoryRepository.save(newcategory);
-
-      const transaction = await transactionRepository.create({
-        title,
-        value,
-        category_id: newcategory.id,
-        type,
-      });
-
-      await transactionRepository.save(transaction);
-
-      return transaction;
+    if (!categoryData) {
+      categoryData = await categoryRepository.create({ title: category });
+      await categoryRepository.save(categoryData);
     }
 
     const transaction = await transactionRepository.create({
       title,
       value,
       type,
-      category_id: checkCategoryExist.id,
+      category_id: categoryData.id,
     });
 
     await transactionRepository.save(transaction);
