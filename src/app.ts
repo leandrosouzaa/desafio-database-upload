@@ -4,6 +4,7 @@ import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import 'express-async-errors';
 
+import { types } from 'pg';
 import routes from './routes';
 import AppError from './errors/AppError';
 
@@ -23,12 +24,14 @@ app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
     });
   }
 
-  console.error(err);
-
   return response.status(500).json({
     status: 'error',
     message: 'Internal server error',
   });
+});
+
+types.setTypeParser(1700, function parseToNum(val: string) {
+  return parseFloat(val);
 });
 
 export default app;
