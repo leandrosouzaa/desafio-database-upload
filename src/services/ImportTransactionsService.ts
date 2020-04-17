@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import csv from 'csvtojson';
 import CreateTransactionService from './CreateTransactionService';
 
@@ -17,7 +18,6 @@ class ImportTransactionsService {
     // eslint-disable-next-line no-restricted-syntax
     for (let i = 0; i < json.length; i += 1) {
       const { title, type, value, category } = json[i];
-
       // eslint-disable-next-line no-await-in-loop
       const transaction = await createTransaction.execute({
         title,
@@ -28,6 +28,8 @@ class ImportTransactionsService {
 
       transactions.push(transaction);
     }
+
+    await fs.promises.unlink(filePath);
 
     return transactions;
   }
