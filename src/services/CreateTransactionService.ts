@@ -30,7 +30,7 @@ class CreateTransactionService {
       throw new AppError('Insufficient available balance');
     }
     let categoryData = await categoryRepository.findOne({
-      where: { category },
+      where: { title: category },
     });
 
     if (!categoryData) {
